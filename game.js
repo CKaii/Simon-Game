@@ -1,12 +1,12 @@
 const buttonColours = ['red', 'blue', 'green', 'yellow']
-const gamePattern = []
-const userClickedPattern = []
-const level = 0
-const started = false
+let gamePattern = []
+let userClickedPattern = []
+let level = 0
+let started = false
 
 $(document).keypress(function() {
   if (!started) {
-    $('#level-title').text('Level' + level);
+    $('#level-title').text('Level ' + level);
     nextSequence();
     started = true;
   }
@@ -18,11 +18,32 @@ $('.btn').click(function(){
 
   playSound(userChosenColour)
   animatePress(userChosenColour)
+
+  checkAnswer(userClickedPattern.length-1)
 })
 
+function checkAnswer(currentLevel) {
+  if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+    console.log('success');
+
+    if (userClickedPattern.length === gamePattern.length){
+      setTimeout(function() {
+        nextSequence();
+      }, 1000)
+    }
+  } else {
+      setTimeout(function(){
+        $('body').addClass('game-over')
+      }, 200)
+        $('h1').text('Game Over, Press Any Key To Restart')
+    console.log('wrong');
+  }
+}
+
 function nextSequence() {
+  userClickedPattern = []
   level++;
-  $('#level-title').text('Level' + level)
+  $('#level-title').text('Level ' + level)
   const randomNumber = Math.floor(Math.random()*4)
   const randomChosenColour = buttonColours[randomNumber]
   gamePattern.push(randomChosenColour)
@@ -44,6 +65,7 @@ function animatePress(currentColour){
     $('#' + currentColour).removeClass('pressed');
   }, 100)
 }
+
 
 
 console.log(userClickedPattern);
